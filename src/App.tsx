@@ -1,3 +1,4 @@
+import AddNewItem from "./AddNewItem";
 import "./App.css";
 import Card from "./Card";
 import { Column } from "./Column";
@@ -17,6 +18,10 @@ function App() {
       <Column text="To Do">
         <Card text="Generate app scaffold"></Card>
       </Column>
+      <AddNewItem
+        toggleButtonText="+ Add Another list"
+        onAdd={console.log}
+      ></AddNewItem>
     </AppContainer>
   );
 }
