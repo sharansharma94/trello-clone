@@ -1,5 +1,6 @@
 import { v4 as uuid } from "uuid";
 import { createContext, useContext, useReducer } from "react";
+import { findItemIndexById } from "./utils/findItemIndexById";
 
 interface Task {
   id: string;
@@ -39,7 +40,17 @@ const appStateReducer = (state: AppState, action: Action): AppState => {
       };
     }
     case "ADD_TASK":
+      const targetLaneIndex = findItemIndexById(
+        state.lists,
+        action.payload.taskId
+      );
+      state.lists[targetLaneIndex].tasks.push({
+        id: uuid(),
+        text: action.payload.text,
+      });
+
       return { ...state };
+
     default:
       return state;
   }
