@@ -3,7 +3,7 @@ import NewItemForm from "./NewItemForm";
 import { AddItemButton } from "./styles";
 
 interface AddNewItemProps {
-  onAdd(text: string): void;
+  onAdd(text: string, taskId?: string): void;
   toggleButtonText: string;
   dark?: boolean;
 }
