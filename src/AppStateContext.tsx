@@ -1,6 +1,8 @@
 import { v4 as uuid } from "uuid";
 import { createContext, useContext, useReducer } from "react";
 import { findItemIndexById } from "./utils/findItemIndexById";
+import { moveItem } from "./utils/moveItem";
+import { DragItem } from "./utils/DragItem";
 
 interface Task {
   id: string;
@@ -13,6 +15,7 @@ interface List {
 }
 interface AppState {
   lists: List[];
+  draggedItem?: DragItem;
 }
 
 const appState: AppState = {
@@ -26,7 +29,9 @@ const appState: AppState = {
 
 type Action =
   | { type: "ADD_LIST"; payload: string }
-  | { type: "ADD_TASK"; payload: { text: string; taskId: string } };
+  | { type: "ADD_TASK"; payload: { text: string; taskId: string } }
+  | { type: "MOVE_LIST"; payload: { dragIndex: number; hoverIndex: number } }
+  | { type: "SET_DRAGGED_ITEM"; payload: DragItem | undefined };
 
 const appStateReducer = (state: AppState, action: Action): AppState => {
   switch (action.type) {
@@ -39,7 +44,7 @@ const appStateReducer = (state: AppState, action: Action): AppState => {
         ],
       };
     }
-    case "ADD_TASK":
+    case "ADD_TASK": {
       const targetLaneIndex = findItemIndexById(
         state.lists,
         action.payload.taskId
@@ -48,8 +53,17 @@ const appStateReducer = (state: AppState, action: Action): AppState => {
         id: uuid(),
         text: action.payload.text,
       });
-
       return { ...state };
+    }
+
+    case "MOVE_LIST": {
+      const { dragIndex, hoverIndex } = action.payload;
+      state.lists = moveItem(state.lists, dragIndex, hoverIndex);
+      return { ...state };
+    }
+    case "SET_DRAGGED_ITEM": {
+      return { ...state, draggedItem: action.payload };
+    }
 
     default:
       return state;
