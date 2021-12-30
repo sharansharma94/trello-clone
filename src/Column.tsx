@@ -1,6 +1,8 @@
+import { useRef } from "react";
 import AddNewItem from "./AddNewItem";
 import { useAppState } from "./AppStateContext";
 import Card from "./Card";
+import { useItemDrag } from "./hooks/useItemDrag";
 import { ColumnContainer, ColumnTitle } from "./styles";
 
 interface ColumnProps {
@@ -14,8 +16,14 @@ export const Column = ({
   taskId,
 }: React.PropsWithChildren<ColumnProps>) => {
   const { state, dispatch } = useAppState();
+  const ref = useRef<HTMLDivElement>(null);
+
+  const { drag } = useItemDrag({ type: "COLUMN", id: taskId, index, text });
+
+  drag(ref);
+
   return (
-    <ColumnContainer>
+    <ColumnContainer ref={ref}>
       <ColumnTitle>{text}</ColumnTitle>
 
       {state.lists[index].tasks.map((task) => (
