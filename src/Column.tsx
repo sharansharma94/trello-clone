@@ -1,9 +1,11 @@
 import { useRef } from "react";
+import { useDrop } from "react-dnd";
 import AddNewItem from "./AddNewItem";
 import { useAppState } from "./AppStateContext";
 import Card from "./Card";
 import { useItemDrag } from "./hooks/useItemDrag";
 import { ColumnContainer, ColumnTitle } from "./styles";
+import { DragItem } from "./utils/DragItem";
 
 interface ColumnProps {
   text: string;
@@ -20,7 +22,22 @@ export const Column = ({
 
   const { drag } = useItemDrag({ type: "COLUMN", id: taskId, index, text });
 
-  drag(ref);
+  const [, drop] = useDrop({
+    accept: "COLUMN",
+    hover(item: DragItem) {
+      const dragIndex = item.index;
+      const hoverIndex = index;
+
+      if (dragIndex === hoverIndex) {
+        return;
+      }
+
+      dispatch({ type: "MOVE_LIST", payload: { dragIndex, hoverIndex } });
+      item.index = hoverIndex;
+    },
+  });
+
+  drag(drop(ref));
 
   return (
     <ColumnContainer ref={ref}>
