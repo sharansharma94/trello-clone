@@ -20,11 +20,16 @@ export const Column = ({
   const { state, dispatch } = useAppState();
   const ref = useRef<HTMLDivElement>(null);
 
-  const { drag } = useItemDrag({ type: "COLUMN", id: taskId, index, text });
+  const { drag, isDragging } = useItemDrag({
+    type: "COLUMN",
+    id: taskId,
+    index,
+    text,
+  });
 
-  const [, drop] = useDrop({
+  const [{ canDrop, isOver }, drop] = useDrop({
     accept: "COLUMN",
-    hover(item: DragItem) {
+    drop: (item: DragItem) => {
       const dragIndex = item.index;
       const hoverIndex = index;
 
@@ -35,12 +40,29 @@ export const Column = ({
       dispatch({ type: "MOVE_LIST", payload: { dragIndex, hoverIndex } });
       item.index = hoverIndex;
     },
+
+    collect: (monitor) => ({
+      isOver: monitor.isOver(),
+      canDrop: monitor.canDrop(),
+    }),
   });
 
-  drag(drop(ref));
-
+  drag(ref);
+  const isActive = canDrop && isOver;
+  let backgroundColor = "#222";
+  if (isActive) {
+    backgroundColor = "darkgreen";
+  } else if (canDrop) {
+    backgroundColor = "darkkhaki";
+  }
   return (
-    <ColumnContainer ref={ref}>
+    <ColumnContainer
+      ref={ref}
+      style={{
+        opacity: isDragging ? 0.4 : 1,
+        cursor: "pointer",
+      }}
+    >
       <ColumnTitle>{text}</ColumnTitle>
 
       {state.lists[index].tasks.map((task) => (
