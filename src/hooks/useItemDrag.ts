@@ -7,7 +7,10 @@ export const useItemDrag = (item: DragItem) => {
   const [{ isDragging }, drag] = useDrag(
     () => ({
       type: item.type,
-      item: () => dispatch({ type: "SET_DRAGGED_ITEM", payload: item }),
+      item: () => {
+        dispatch({ type: "SET_DRAGGED_ITEM", payload: item });
+        return item;
+      },
       end: () => dispatch({ type: "SET_DRAGGED_ITEM", payload: undefined }),
       collect: (monitor) => ({
         isDragging: monitor.isDragging(),
