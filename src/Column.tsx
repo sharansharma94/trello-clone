@@ -47,7 +47,7 @@ export const Column = ({
     }),
   });
 
-  drag(ref);
+  drag(drop(ref));
   const isActive = canDrop && isOver;
   let backgroundColor = "#222";
   if (isActive) {
