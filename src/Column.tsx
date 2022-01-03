@@ -6,6 +6,7 @@ import Card from "./Card";
 import { useItemDrag } from "./hooks/useItemDrag";
 import { ColumnContainer, ColumnTitle } from "./styles";
 import { DragItem } from "./utils/DragItem";
+import { isHidden } from "./utils/isHidden";
 
 interface ColumnProps {
   text: string;
@@ -48,20 +49,11 @@ export const Column = ({
   });
 
   drag(drop(ref));
-  const isActive = canDrop && isOver;
-  let backgroundColor = "#222";
-  if (isActive) {
-    backgroundColor = "darkgreen";
-  } else if (canDrop) {
-    backgroundColor = "darkkhaki";
-  }
+
   return (
     <ColumnContainer
       ref={ref}
-      style={{
-        opacity: isDragging ? 0.4 : 1,
-        cursor: "pointer",
-      }}
+      isHidden={isHidden(state.draggedItem, "COLUMN", taskId)}
     >
       <ColumnTitle>{text}</ColumnTitle>
 

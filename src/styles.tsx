@@ -9,8 +9,14 @@ export const AppContainer = styled.div`
   width: 100%;
   padding: 20px;
 `;
+interface DragPreviewContainerProps {
+  isHidden?: boolean;
+}
+export const DragPreviewContainer = styled.div<DragPreviewContainerProps>`
+  opacity: ${(props) => (props.isHidden ? 0.3 : 1)};
+`;
 
-export const ColumnContainer = styled.div`
+export const ColumnContainer = styled(DragPreviewContainer)`
   background-color: #ebecf0;
   width: 300px;
   min-height: 40px;
