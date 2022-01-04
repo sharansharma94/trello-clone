@@ -2,12 +2,14 @@ import AddNewItem from "./AddNewItem";
 import "./App.css";
 import { useAppState } from "./AppStateContext";
 import { Column } from "./Column";
+import { CustomDragLayer } from "./CustomdragLayer";
 import { AppContainer } from "./styles";
 
 function App() {
   const { state, dispatch } = useAppState();
   return (
     <AppContainer>
+      <CustomDragLayer />
       {state.lists.map((list, i) => (
         <Column text={list.text} key={list.id} index={i} taskId={list.id} />
       ))}
