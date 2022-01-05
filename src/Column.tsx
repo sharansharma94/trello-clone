@@ -9,6 +9,7 @@ import { DragItem } from "./utils/DragItem";
 import { isHidden } from "./utils/isHidden";
 
 interface ColumnProps {
+  isPreview?: boolean;
   text: string;
   index: number;
   taskId: string;
@@ -17,11 +18,12 @@ export const Column = ({
   text,
   index,
   taskId,
+  isPreview,
 }: React.PropsWithChildren<ColumnProps>) => {
   const { state, dispatch } = useAppState();
   const ref = useRef<HTMLDivElement>(null);
 
-  const { drag, isDragging } = useItemDrag({
+  const { drag } = useItemDrag({
     type: "COLUMN",
     id: taskId,
     index,
@@ -53,7 +55,8 @@ export const Column = ({
   return (
     <ColumnContainer
       ref={ref}
-      isHidden={isHidden(state.draggedItem, "COLUMN", taskId)}
+      isHidden={isHidden(isPreview, state.draggedItem, "COLUMN", taskId)}
+      isPreview={isPreview}
     >
       <ColumnTitle>{text}</ColumnTitle>
 
