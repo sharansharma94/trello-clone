@@ -30,7 +30,7 @@ export const Column = ({
     text,
   });
 
-  const [{ canDrop, isOver }, drop] = useDrop({
+  const [, drop] = useDrop({
     accept: "COLUMN",
     drop: (item: DragItem) => {
       const dragIndex = item.index;
@@ -43,11 +43,6 @@ export const Column = ({
       dispatch({ type: "MOVE_LIST", payload: { dragIndex, hoverIndex } });
       item.index = hoverIndex;
     },
-
-    collect: (monitor) => ({
-      isOver: monitor.isOver(),
-      canDrop: monitor.canDrop(),
-    }),
   });
 
   drag(drop(ref));
@@ -60,8 +55,14 @@ export const Column = ({
     >
       <ColumnTitle>{text}</ColumnTitle>
 
-      {state.lists[index].tasks.map((task) => (
-        <Card text={task.text} key={task.id} />
+      {state.lists[index].tasks.map((task, i) => (
+        <Card
+          id={task.id}
+          columnId={taskId}
+          text={task.text}
+          index={i}
+          key={task.id}
+        />
       ))}
 
       <AddNewItem
