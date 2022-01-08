@@ -31,17 +31,38 @@ export const Column = ({
   });
 
   const [, drop] = useDrop({
-    accept: "COLUMN",
+    accept: ["CARD", "COLUMN"],
     drop: (item: DragItem) => {
-      const dragIndex = item.index;
-      const hoverIndex = index;
+      if (item.type === "COLUMN") {
+        const dragIndex = item.index;
+        const hoverIndex = index;
 
-      if (dragIndex === hoverIndex) {
-        return;
+        if (dragIndex === hoverIndex) {
+          return;
+        }
+        dispatch({ type: "MOVE_LIST", payload: { dragIndex, hoverIndex } });
+        item.index = hoverIndex;
+      } else {
+        const dragIndex = item.index;
+        const hoverIndex = 0;
+        const sourceColumn = item.columnId;
+        const targetColumn = taskId;
+
+        if (sourceColumn === targetColumn) return;
+
+        dispatch({
+          type: "MOVE_CARD",
+          payload: {
+            dragIndex,
+            hoverIndex,
+            sourceColumn,
+            targetColumn,
+          },
+        });
+
+        item.index = hoverIndex;
+        item.columnId = targetColumn;
       }
-
-      dispatch({ type: "MOVE_LIST", payload: { dragIndex, hoverIndex } });
-      item.index = hoverIndex;
     },
   });
 
@@ -55,7 +76,7 @@ export const Column = ({
     >
       <ColumnTitle>{text}</ColumnTitle>
 
-      {state.lists[index].tasks.map((task, i) => (
+      {state.lists[index]?.tasks.map((task, i) => (
         <Card
           id={task.id}
           columnId={taskId}
