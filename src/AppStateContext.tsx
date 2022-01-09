@@ -1,8 +1,16 @@
 import { v4 as uuid } from "uuid";
-import { createContext, useContext, useReducer } from "react";
+import React, {
+  createContext,
+  PropsWithChildren,
+  useContext,
+  useEffect,
+  useReducer,
+} from "react";
 import { findItemIndexById } from "./utils/findItemIndexById";
 import { moveItem } from "./utils/moveItem";
 import { DragItem } from "./utils/DragItem";
+import { save } from "./api";
+import { withData } from "./withData";
 
 interface Task {
   id: string;
@@ -13,7 +21,7 @@ interface List {
   text: string;
   tasks: Task[];
 }
-interface AppState {
+export interface AppState {
   lists: List[];
   draggedItem?: DragItem;
 }
@@ -99,14 +107,24 @@ const AppStateContext = createContext<AppStateContextProps>(
   {} as AppStateContextProps
 );
 
-export const AppStateProvider = ({ children }: React.PropsWithChildren<{}>) => {
-  const [state, dispatch] = useReducer(appStateReducer, appState);
-  return (
-    <AppStateContext.Provider value={{ state, dispatch }}>
-      {children}
-    </AppStateContext.Provider>
-  );
-};
+export const AppStateProvider = withData(
+  ({
+    children,
+    initialState,
+  }: PropsWithChildren<{ initialState: AppState }>) => {
+    const [state, dispatch] = useReducer(appStateReducer, initialState);
+
+    useEffect(() => {
+      save(state);
+    }, [state]);
+
+    return (
+      <AppStateContext.Provider value={{ state, dispatch }}>
+        {children}
+      </AppStateContext.Provider>
+    );
+  }
+);
 
 //hook
 
